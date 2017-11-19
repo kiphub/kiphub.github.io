@@ -3,13 +3,13 @@
 		<head>
 			<title>Financial Mathematics</title>
 			<!-- link to main stylesheet -->
-			<!-- <link rel="stylesheet" type="text/css" href="/css/main.css"> -->
+			<link rel="stylesheet" type="text/css" href="./css/style.css">
 		</head>
 		<body>
             <h1>Interest Rate Conversion</h1>
 
 			<div name="interestRateConversion" class="container">
-                <label for="intRate">Interest Rate: </label>
+                <label for="intRate">Interest Rate (%): </label>
                 <input id="intRate" name='intRate' /><br />
 
                 <label for="srcComp">Compound At: </label>
@@ -18,9 +18,9 @@
                 <label for="tarComp">Target Interest Rate Compound At:</label>
                 <input id="tarComp" name='tarComp'/><br />
 
-                <input type='button' id='myButton' value="Calculate" />
-
-				<label id="tarIntRate">Resulting interest rate: </label>
+				<p>Converted interest rate: </p>
+				<p id="tarIntRate"></p>
+				<button id='myButton'>Calculate</button>
 				<script src="scripts/fm.js"></script>
 
 			</div><!-- /.container -->
