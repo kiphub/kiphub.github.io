@@ -1,9 +1,20 @@
 
+const myButton = document.getElementById('myButton');
+var tarIntRate = document.getElementById('tarIntRate');
 
-function iconv() {
-    var input = prompt("Say something.")
-    console.log("it works")
-    document.write(input)
-}
+function iconv(intRate, srcComp, tarComp) {
 
-iconv()
+    var convIntRate = tarComp * (Math.pow((1 + intRate/srcComp), (srcComp/tarComp)) - 1);
+
+    return convIntRate;
+};
+
+
+myButton.addEventListener('click', () => {
+    
+    var intRate = parseFloat(document.getElementById('intRate').value);
+    var srcComp = parseFloat(document.getElementById('srcComp').value);
+    var tarComp = parseFloat(document.getElementById('tarComp').value);
+
+    tarIntRate.textContent = iconv(intRate, srcComp, tarComp);
+});
