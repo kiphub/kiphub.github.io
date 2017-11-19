@@ -6,24 +6,26 @@
 			<!-- <link rel="stylesheet" type="text/css" href="/css/main.css"> -->
 		</head>
 		<body>
-			<nav>
-	    		<ul>
-	        		<li><a href="/">Home</a></li>
-		        	<li><a href="/about">About</a></li>
-	        		<li><a href="/cv">CV</a></li>
-	        		<li><a href="/blog">Blog</a></li>
-	    		</ul>
-			</nav>
-			<div class="container">
+            <h1>Interest Rate Conversion</h1>
 
-			{{ content }}
+			<div name="interestRateConversion" class="container">
+                <label for="intRate">Interest Rate: </label>
+                <input id="intRate" name='intRate' /><br />
+
+                <label for="srcComp">Compound At: </label>
+                <input id="srcComp" name='srcComp'/><br />
+
+                <label for="tarComp">Target Interest Rate Compound At:</label>
+                <input id="tarComp" name='tarComp'/><br />
+
+                <input type='button' id='myButton' value="Calculate" />
+
+				<label id="tarIntRate">Resulting interest rate: </label>
+				<script src="scripts/fm.js"></script>
 
 			</div><!-- /.container -->
 			<footer>
-	    		<ul>
-	        		<li><a href="mailto:kipyyin@gmail.com">email</a></li>
-	        		<li><a href="https://github.com/kipyin">github.com/kipyin</a></li>
-				</ul>
+
 			</footer>
 		</body>
 	</html>
