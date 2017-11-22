@@ -1,27 +1,37 @@
 <!DOCTYPE html>
 	<html>
 		<head>
+			<meta name="description" content="An interest rate converter." />
 			<title>Financial Mathematics</title>
+			<script src="http://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 			<!-- link to main stylesheet -->
 			<link rel="stylesheet" type="text/css" href="./css/style.css">
 		</head>
 		<body>
-            <h1>Interest Rate Conversion</h1>
 
 			<div name="interestRateConversion" class="container">
-                <label for="intRate">Interest Rate (%): </label>
-                <input id="intRate" name='intRate' /><br />
+				<form>
+					<h1>Interest Rate Conversion</h1>
+					<p>
+		                <label for="intRate">Interest Rate (%): </label>
+		                <input id="intRate" name='intRate' type="text" /><br />
+					</p>
+					<p>
+		                <label for="srcComp">Compound At: </label>
+		                <input id="srcComp" name='srcComp' type="text"/><br />
+					</p>
+					<p>
+		                <label for="tarComp">Target Interest Rate Compound At:</label>
+		                <input id="tarComp" name='tarComp' type="text"/><br />
+					</p>
+					<p>
+						<label>Converted interest rate: </label><br />
+						<output id="tarIntRate" name="tarIntRate"></output>
+					</p>
 
-                <label for="srcComp">Compound At: </label>
-                <input id="srcComp" name='srcComp'/><br />
-
-                <label for="tarComp">Target Interest Rate Compound At:</label>
-                <input id="tarComp" name='tarComp'/><br />
-
-				<p>Converted interest rate: </p>
-				<p id="tarIntRate"></p>
-				<button id='myButton'>Calculate</button>
-				<script src="scripts/fm.js"></script>
+					<input id='calculate' type="button" name="calculate" value="Convert" />
+					<script src="scripts/fm.js"></script>
+				</form>
 
 			</div><!-- /.container -->
 			<footer>
