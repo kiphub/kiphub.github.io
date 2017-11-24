@@ -1,5 +1,3 @@
-// I hate dealing with default parameters in javascript.
-
 'use strict';
 
 define(["./lifetables"], function (lifetables) {
@@ -219,6 +217,7 @@ define(["./lifetables"], function (lifetables) {
              */
 
             let a = FUNCTIONS.a;
+            let E = FUNCTIONS.E;
             let iconv = FUNCTIONS.iconv;
 
             term -= deferral;
@@ -326,28 +325,6 @@ define(["./lifetables"], function (lifetables) {
                 return epvFutureBenefits - premium * epvFuturePremiums;
             }
         },
-
     };
-
     return FUNCTIONS;
-
-    // console.log(am(x=20, assumption="UDD", interest=0.1, term=10, m=12))
-    // function test() {
-    //     // Test for `am`
-    //     let assumptions = ["UDD", "W2", "W3"];
-    //     let ages = [20, 30, 40, 50, 60, 70];
-    //
-    //     for (let i = 0; i < assumptions.length; i++) {
-    //         for (let j = 0; j < ages.length; j++) {
-    //             console.log(`${assumptions[i]}, ${ages[j]}: ${am({x: ages[j], assumption: assumptions[i], term: 25, interest: 0.05, m: 2})}`)
-    //         }
-    //     }
-    // }
-
-    // test()
-
-    // console.log(10000 * V({x: 50, t: 10, term: 20, deferral: 15}))
-
-    // exports = {iconv, l, d, p, q, e, E, A, Am, a, am, P, V};
-
 });
