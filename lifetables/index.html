@@ -12,8 +12,21 @@
             <p id="commandOutput">Results are shown here...</p>
             <input id="userInput" type="text" name="userInput" placeholder="1000*A({x:50, term:20})"/>
             <input id="submit" type="button" name="submit" value="Compute"/>
-
         </p>
+        <form>
+            <label id="symbol-label" for="S">S</label>
+            <input id="symbol" class="symbol" name="symbol" type="text" placeholder="A"/><br />
+
+            <label id="x-label" for="x">age: </label>
+            <input id="x" name="x" class="postsub" type="text" placeholder="x"/><br />
+
+            <label id="angle-n-label" for="angle-n">term: </label>
+            <input id="term" name="term" class="postsub" type="text" placeholder="n" /><br />
+
+            <label id="deferral-label" for="deferral">deferral: </label>
+            <input id="deferral" name="deferral" class="presub" type="text" placeholder="m"/><br />
+        </form>
+
 
     </body>
 </html>
