@@ -3,22 +3,22 @@ const tarIntRate = document.getElementById('tarIntRate');
 const numberInput = document.querySelectorAll('[type="text"]');
 
 const focusHandler = event => {
-  event.target.className = 'highlight';
+    event.target.className = 'highlight';
 };
 
 const blurHandler = event => {
-  event.target.className = '';
+    event.target.className = '';
 };
 
-numberInput.forEach( element => element.addEventListener('focus', focusHandler) );
-numberInput.forEach( element => element.addEventListener('blur', blurHandler) );
+numberInput.forEach(element => element.addEventListener('focus', focusHandler));
+numberInput.forEach(element => element.addEventListener('blur', blurHandler));
 
 
 function iconv(intRate, srcComp, tarComp) {
 
     if (srcComp && tarComp && intRate) {
         intRate /= 100
-        const convIntRate = tarComp * (Math.pow((1 + intRate/srcComp), (srcComp/tarComp)) - 1);
+        const convIntRate = tarComp * (Math.pow((1 + intRate / srcComp), (srcComp / tarComp)) - 1);
         return convIntRate * 100;
     } else {
         return "Some values are missing!";

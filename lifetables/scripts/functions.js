@@ -1,26 +1,26 @@
 'use strict';
 
-define(["./lifetables"], function (lifetables) {
+define(["./lifetables"], function(lifetables) {
 
-    const LIFETABLE = lifetables.ILT;  // change this when switching lifetables.
+    const LIFETABLE = lifetables.ILT; // change this when switching lifetables.
     const MAXAGE = Object.keys(LIFETABLE).slice(-1)[0];
     const FUNCTIONS = {
 
-        iconv: function (intRate=0.06, srcComp, tarComp) {
+        iconv: function(intRate = 0.06, srcComp, tarComp) {
 
             // If comp's are `nan` or `0`, make them 1.
             srcComp = srcComp || 1;
             tarComp = tarComp || 1;
 
-            if (isFinite(srcComp) && isFinite(tarComp)){
+            if (isFinite(srcComp) && isFinite(tarComp)) {
                 // finite -> finite
-                var convIntRate = tarComp * (Math.pow( (1 + intRate/srcComp), (srcComp/tarComp) ) - 1);
+                var convIntRate = tarComp * (Math.pow((1 + intRate / srcComp), (srcComp / tarComp)) - 1);
 
-            } else if ( ! isFinite(srcComp) && isFinite(tarComp) ) {
+            } else if (!isFinite(srcComp) && isFinite(tarComp)) {
                 // infinite -> finite
                 var convIntRate = tarComp * (Math.exp(intRate / tarComp) - 1);
 
-            } else if ( ! isFinite(tarComp) ) {
+            } else if (!isFinite(tarComp)) {
                 // finite -> infinite
                 var convIntRate = srcComp * Math.log(1 + intRate / srcComp);
 
@@ -32,23 +32,23 @@ define(["./lifetables"], function (lifetables) {
             return convIntRate;
         },
 
-        l: function (x=0, assumption="UDD") {
+        l: function(x = 0, assumption = "UDD") {
             // assumption required for fractional ages.
             // assumption = "UDD" || "CFM"
             // `l()` returns the radix.
 
-            let n = Math.floor(x);  // Get the integer part of x.
-            let s = x - n;  // Get the decimal part of x.
+            let n = Math.floor(x); // Get the integer part of x.
+            let s = x - n; // Get the decimal part of x.
 
-            if ( s ) {
+            if (s) {
                 // If x is not an integer
                 let lower = LIFETABLE[n];
                 let upper = LIFETABLE[n + 1];
 
                 if (assumption === "UDD") {
-                    return lower * (1 - s) + upper * s;  // linear interpolation
+                    return lower * (1 - s) + upper * s; // linear interpolation
                 } else if (assumption === "CFM") {
-                    return lower ** (1 - s) * upper ** s;  // exponential interpolation
+                    return lower ** (1 - s) * upper ** s; // exponential interpolation
                 } else {
                     console.error(`${assumption} is an invalid assumption.`)
                 }
@@ -59,7 +59,7 @@ define(["./lifetables"], function (lifetables) {
             }
         },
 
-        d: function (x, n=1, assumption="UDD") {
+        d: function(x, n = 1, assumption = "UDD") {
             // assumption required for fractional ages.
             // assumption = "UDD" || "CFM"
 
@@ -68,7 +68,7 @@ define(["./lifetables"], function (lifetables) {
             return l(x, assumption) - l(x + n, assumption);
         },
 
-        p: function (x, t=1, assumption="UDD") {
+        p: function(x, t = 1, assumption = "UDD") {
             // assumption required for fractional ages.
             // assumption = "UDD" || "CFM"
 
@@ -77,14 +77,14 @@ define(["./lifetables"], function (lifetables) {
             return l(x + t, assumption) / l(x, assumption);
         },
 
-        q: function (x, t=1, assumption="UDD") {
+        q: function(x, t = 1, assumption = "UDD") {
             // assumption required for fractional ages.
             // assumption = "UDD" || "CFM"
 
             return 1 - p(x, t, assumption);
         },
 
-        e: function (x, n=MAXAGE-x, assumption="UDD") {
+        e: function(x, n = MAXAGE - x, assumption = "UDD") {
             // curtate life expectancy by default.
             // assumption required for complete life expectancy
             // assumption = "UDD" || "CFM"
@@ -102,16 +102,22 @@ define(["./lifetables"], function (lifetables) {
             return sum;
         },
 
-        E: function (x, term=Infinity, interest=0.06) {
+        E: function(x, term = Infinity, interest = 0.06) {
             // The EPV of a pure endowment with benefit of 1.
             // return 0 if term === Infinity; return 1 if term === 0.
 
             let p = FUNCTIONS.p;
 
-            return (1 + interest) ** (-term) * p(x, term);  // v^n * npx
+            return (1 + interest) ** (-term) * p(x, term); // v^n * npx
         },
 
-        A: function ({x, term=MAXAGE - x, deferral=0, interest=0.06, endowment=false} = {}) {
+        A: function({
+            x,
+            term = MAXAGE - x,
+            deferral = 0,
+            interest = 0.06,
+            endowment = false
+        } = {}) {
 
             let l = FUNCTIONS.l;
             let p = FUNCTIONS.p;
@@ -119,14 +125,14 @@ define(["./lifetables"], function (lifetables) {
 
             term -= deferral;
 
-            let evalAge = x + deferral;  // The age at which the EPV is actually evaluated.
+            let evalAge = x + deferral; // The age at which the EPV is actually evaluated.
 
-            var epv = 0;  // FUNCTIONS is evantually the desired EPV.
+            var epv = 0; // FUNCTIONS is evantually the desired EPV.
 
             for (let t = 0; t < term; t++) {
                 //    1
                 // A(x+m, n)
-                epv += (1 + interest) ** -(t + 1) * ( p(evalAge, t) - p(evalAge, t + 1) );
+                epv += (1 + interest) ** -(t + 1) * (p(evalAge, t) - p(evalAge, t + 1));
 
             }
 
@@ -145,7 +151,15 @@ define(["./lifetables"], function (lifetables) {
 
         },
 
-        Am: function ({x, deferral=0, term=MAXAGE-x, interest=0.06, endowment=false, assumption, m} = {}) {
+        Am: function({
+            x,
+            deferral = 0,
+            term = MAXAGE - x,
+            interest = 0.06,
+            endowment = false,
+            assumption,
+            m
+        } = {}) {
             // `assumption` = "UDD" || "acceleration".
             // `m` can be `Infinity`.
 
@@ -153,7 +167,7 @@ define(["./lifetables"], function (lifetables) {
             let A = FUNCTIONS.A;
             let E = FUNCTIONS.E;
 
-            let evalAge = x + deferral;  // The age at which the EPV is actually evaluated.
+            let evalAge = x + deferral; // The age at which the EPV is actually evaluated.
             term -= deferral;
 
             if (assumption === "UDD") {
@@ -162,13 +176,13 @@ define(["./lifetables"], function (lifetables) {
 
             } else if (assumption === "acceleration") {
 
-                if (! isFinite(m)) {
+                if (!isFinite(m)) {
                     // If `m` is `Infinity`
                     var convFactor = (1 + interest) ** 0.5;
 
                 } else {
 
-                    var convFactor = (1 + interest) ** ( (m - 1)/(2 * m) );
+                    var convFactor = (1 + interest) ** ((m - 1) / (2 * m));
                 }
 
             } else {
@@ -177,17 +191,35 @@ define(["./lifetables"], function (lifetables) {
 
                 var convFactor = 1;
 
-            }  // End of the assumption check.
+            } // End of the assumption check.
 
             if (endowment) {
                 // Apply `convFactor` only to the term part.
-                return convFactor * A({x:evalAge, term:term, deferral:deferral, interest:interest, due:false}) + E(x, deferral + term);
+                return convFactor * A({
+                    x: evalAge,
+                    term: term,
+                    deferral: deferral,
+                    interest: interest,
+                    due: false
+                }) + E(x, deferral + term);
             } else {
-                return convFactor * A({x:evalAge, term:term, deferral:deferral, interest:interest, due:false});
+                return convFactor * A({
+                    x: evalAge,
+                    term: term,
+                    deferral: deferral,
+                    interest: interest,
+                    due: false
+                });
             }
         },
 
-        a: function ({x, term=MAXAGE - x, deferral=0, interest=0.06, due=true} = {}) {
+        a: function({
+            x,
+            term = MAXAGE - x,
+            deferral = 0,
+            interest = 0.06,
+            due = true
+        } = {}) {
             // EPV of an annuity.
 
             let A = FUNCTIONS.A;
@@ -198,16 +230,30 @@ define(["./lifetables"], function (lifetables) {
 
             term -= deferral;
 
-            let epv = ( 1 - A({x:evalAge, term:term, deferral:0, interest:interest, endowment:true}) ) / iconv(interest, 1, -1);
+            let epv = (1 - A({
+                x: evalAge,
+                term: term,
+                deferral: 0,
+                interest: interest,
+                endowment: true
+            })) / iconv(interest, 1, -1);
 
-            if (! due) {
+            if (!due) {
                 epv += E(evalAge, term, interest) - 1;
             }
 
             return epv * E(x, deferral);
         },
 
-        am: function ({x, term=MAXAGE - x, deferral=0, interest=0.06, due=true, assumption, m} = {}) {
+        am: function({
+            x,
+            term = MAXAGE - x,
+            deferral = 0,
+            interest = 0.06,
+            due = true,
+            assumption,
+            m
+        } = {}) {
             // assumption = "W2" || "W3" || "UDD"
 
             /**
@@ -227,50 +273,65 @@ define(["./lifetables"], function (lifetables) {
                 // Should I explain more on this?
 
                 // Approximate the force of mortality.
-                let mu = - 0.5 * ( Math.log( p(age - 1) ) + Math.log( p(age) ) );
+                let mu = -0.5 * (Math.log(p(age - 1)) + Math.log(p(age)));
                 let delta = iconv(interest, 1, Infinity);
                 let d = iconv(interest, 1, -1);
                 let im = iconv(interest, 1, m);
                 let dm = iconv(interest, 1, -m);
 
                 // First calculate the coefficients
-                if ( ["W2", "W3"].includes(assumption) ) {
+                if (["W2", "W3"].includes(assumption)) {
 
-                    if ( isFinite(m) ) {
+                    if (isFinite(m)) {
                         var coef1 = (m - 1) / (2 * m);
                         var coef2 = (m ** 2 - 1) / (12 * m ** 2) * (delta + mu);
                     } else {
-                        var coef1 = 1/ 2;
+                        var coef1 = 1 / 2;
                         var coef2 = 1 / 12 * (delta + mu);
                     }
 
                     if (assumption === "W2") {
-                        return a({x:age, interest:interest}) - coef1;
+                        return a({
+                            x: age,
+                            interest: interest
+                        }) - coef1;
                     } else {
-                        return a({x:age, interest:interest}) - coef1 - coef2;
+                        return a({
+                            x: age,
+                            interest: interest
+                        }) - coef1 - coef2;
                     }
 
                 } else if (assumption === "UDD") {
 
-                    if ( isFinite(m) ) {
+                    if (isFinite(m)) {
                         var denom = im * dm;
-                        var coef0 = ( interest * d ) / denom;  // alpha(m)
-                        var coef1 = ( interest - im ) / denom;  // beta(m)
+                        var coef0 = (interest * d) / denom; // alpha(m)
+                        var coef1 = (interest - im) / denom; // beta(m)
                     } else {
                         var denom = delta ** 2;
-                        var coef0 = ( interest * d ) / denom;  // alpha(m)
-                        var coef1 = ( interest - delta ) / denom;  // beta(m)
+                        var coef0 = (interest * d) / denom; // alpha(m)
+                        var coef1 = (interest - delta) / denom; // beta(m)
                     }
 
-                    return coef0 * a({x:age, interest:interest}) - coef1;
+                    return coef0 * a({
+                        x: age,
+                        interest: interest
+                    }) - coef1;
 
                 }
             } // End of the local function
 
-            return E(x, deferral, interest) * ( wholeLifeAnnuity(x + deferral) - E(x + deferral, term, interest) * wholeLifeAnnuity(x + deferral + term) );
+            return E(x, deferral, interest) * (wholeLifeAnnuity(x + deferral) - E(x + deferral, term, interest) * wholeLifeAnnuity(x + deferral + term));
         },
 
-        P: function ({x, term=MAXAGE-x, deferral=0, interest=0.06, endowment=false} = {}) {
+        P: function({
+            x,
+            term = MAXAGE - x,
+            deferral = 0,
+            interest = 0.06,
+            endowment = false
+        } = {}) {
             // Return the net premium determined by the equivalent principle.
 
             let a = FUNCTIONS.a;
@@ -279,19 +340,41 @@ define(["./lifetables"], function (lifetables) {
 
             if (deferral) {
                 // If deferral is provided, assume that the premiums are payed during the deferral period.
-                var epvPremiums = a({x: x, term: deferral, interest: interest});
+                var epvPremiums = a({
+                    x: x,
+                    term: deferral,
+                    interest: interest
+                });
             } else {
                 // If there is no deferral, then the term is the same as that of the benefits.
-                var epvPremiums = a({x: x, term: term, interest: interest});
+                var epvPremiums = a({
+                    x: x,
+                    term: term,
+                    interest: interest
+                });
             }
 
-            let epvBenefits = A({x: x, term: term, deferral: deferral, interest: interest, endowment: endowment});
+            let epvBenefits = A({
+                x: x,
+                term: term,
+                deferral: deferral,
+                interest: interest,
+                endowment: endowment
+            });
 
             return epvBenefits / epvPremiums;
 
         },
 
-        V: function ({x, t=0, term=MAXAGE-x, deferral=0, interest=0.06, endowment=false, premium=null /*, FPT=false? */} = {}){
+        V: function({
+            x,
+            t = 0,
+            term = MAXAGE - x,
+            deferral = 0,
+            interest = 0.06,
+            endowment = false,
+            premium = null /*, FPT=false? */
+        } = {}) {
             // Return the net premium reserve for whole life, term, and deferred contracts.
             // Using the equivalent princples.
             // Using the prospective method.
@@ -301,26 +384,56 @@ define(["./lifetables"], function (lifetables) {
             let a = FUNCTIONS.a;
 
             // If premium is not given, use the premium determined by the equivalent principle.
-            premium = premium || P({x: x, term: term, deferral: deferral, interest: interest, endowment: endowment});
+            premium = premium || P({
+                x: x,
+                term: term,
+                deferral: deferral,
+                interest: interest,
+                endowment: endowment
+            });
 
-            if ( t < deferral) {
+            if (t < deferral) {
                 // If the policy is still in the deferral period...
-                let epvFuturePremiums = a({x: x+t, term: deferral-t, interest: interest});
-                let epvFutureBenefits = A({x: x+t, term: term, deferal: deferral-t, interest: interest, endowment: endowment});
+                let epvFuturePremiums = a({
+                    x: x + t,
+                    term: deferral - t,
+                    interest: interest
+                });
+                let epvFutureBenefits = A({
+                    x: x + t,
+                    term: term,
+                    deferal: deferral - t,
+                    interest: interest,
+                    endowment: endowment
+                });
 
                 return epvFutureBenefits - premium * epvFuturePremiums;
 
-            } else if (deferral){
+            } else if (deferral) {
                 // If the policy is passed the deferral period, and the deferral period is not 0, then there is no future premiums.
                 let epvFuturePremiums = 0;
-                let epvFutureBenefits = A({x: x+t, term: term-t, interest: interest, endowment: endowment});
+                let epvFutureBenefits = A({
+                    x: x + t,
+                    term: term - t,
+                    interest: interest,
+                    endowment: endowment
+                });
 
                 return epvFutureBenefits - premium * epvFuturePremiums;
 
             } else {
                 // If no deferral period is given, then the premiums are paid paid before the end of the term.
-                let epvFuturePremiums = a({x: x+t, term: term-t, interest: interest});
-                let epvFutureBenefits = A({x: x+t, term: term-t, interest: interest, endowment: endowment});
+                let epvFuturePremiums = a({
+                    x: x + t,
+                    term: term - t,
+                    interest: interest
+                });
+                let epvFutureBenefits = A({
+                    x: x + t,
+                    term: term - t,
+                    interest: interest,
+                    endowment: endowment
+                });
 
                 return epvFutureBenefits - premium * epvFuturePremiums;
             }
